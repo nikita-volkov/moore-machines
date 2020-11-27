@@ -103,3 +103,7 @@ import Data.Hashable as Exports (Hashable)
 -- text
 -------------------------
 import Data.Text as Exports (Text)
+
+-- comonad
+-------------------------
+import Control.Comonad as Exports

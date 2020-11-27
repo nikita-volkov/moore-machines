@@ -41,6 +41,40 @@ feedingTextChars (TextInternal.Text arr off len) =
           TextArrayUtil.iter arr off $ \ char newOff ->
             loop newOff (progress char)
 
+{-|
+Transformer of chars,
+replaces all space-like chars with space,
+all newline-like chars with @\\n@,
+and trims their duplicate sequences to single-char.
+Oh yeah, it also trims whitespace from beginning and end.
+-}
+trimmingWhitespace :: Moore Char output -> Moore Char output
+trimmingWhitespace =
+  loop False False False
+  where
+    loop notFirst spacePending newlinePending machine =
+      Moore terminate progress
+      where
+        progress char =
+          if isSpace char
+            then if char == '\n' || char == '\r'
+              then loop notFirst False True machine
+              else loop notFirst True newlinePending machine
+            else
+              let
+                mapper =
+                  if notFirst
+                    then if newlinePending
+                      then feeding '\n'
+                      else if spacePending
+                        then feeding ' '
+                        else id
+                    else id
+                in
+                  loop True False False $ feeding char $ mapper $ machine
+        terminate =
+          extract machine
+
 charText :: Moore Char Text
 charText =
   next [] 0
