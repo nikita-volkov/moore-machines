@@ -28,3 +28,18 @@ iter arr offset cont =
         in cont char (offset + 2)
       else
         cont (TextChar.unsafeChr b1) (offset + 1)
+
+fromReverseListOfBytes :: Int -> [Word16] -> Array
+fromReverseListOfBytes arraySize revListOfBytes =
+  runST $ do
+    array <- new arraySize
+    let
+      loop !offset bytes =
+        case bytes of
+          byte : bytesTail ->
+            unsafeWrite array offset byte *>
+            loop (pred offset) bytesTail
+          [] ->
+            return ()
+      in loop (pred arraySize) revListOfBytes
+    unsafeFreeze array
