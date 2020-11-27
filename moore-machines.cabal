@@ -26,6 +26,7 @@ library
   other-modules:
     MooreMachines.Extras
     MooreMachines.Prelude
+    MooreMachines.Util.Char
     MooreMachines.Util.Text
     MooreMachines.Util.TextArray
   build-depends:

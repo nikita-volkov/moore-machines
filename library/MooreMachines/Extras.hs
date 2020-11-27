@@ -5,6 +5,7 @@ import MooreMachines.Prelude
 import Data.Machine.Moore
 import qualified Data.Text.Internal as TextInternal
 import qualified Data.Text as Text
+import qualified MooreMachines.Util.Char as CharUtil
 import qualified MooreMachines.Util.Text as TextUtil
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
 
@@ -85,22 +86,12 @@ charText :: Moore Char Text
 charText =
   next [] 0
   where
-    next bytes arraySize =
-      Moore (terminate bytes arraySize) (progress bytes arraySize)
-    progress !bytes !arraySize char =
-      let
-        codepoint =
-          ord char
-        in if codepoint < 0x10000
-          then
-            next (fromIntegral codepoint : bytes) (succ arraySize)
-          else let
-            cpBasis =
-              codepoint - 0x10000
-            byte1 =
-              fromIntegral ((cpBasis `shiftR` 10) + 0xd800)
-            byte2 =
-              fromIntegral ((cpBasis .&. 0x3ff) + 0xdc00)
-            in next (byte2 : byte1 : bytes) (arraySize + 2)
-    terminate revListOfBytes arraySize =
-      TextUtil.fromReverseListOfBytes arraySize revListOfBytes
+    next !bytes !arraySize =
+      Moore terminate progress
+      where
+        progress =
+          CharUtil.encodeInUtf16
+            (\byte -> next (byte : bytes) (succ arraySize))
+            (\byte1 byte2 -> next (byte2 : byte1 : bytes) (arraySize + 2))
+        terminate =
+          TextUtil.fromReverseListOfBytes arraySize bytes
