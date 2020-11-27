@@ -29,13 +29,11 @@ feeding input (Moore _ progress) =
   progress input
 
 feedingFoldable :: Foldable f => f a -> Moore a b -> Moore a b
-feedingFoldable foldable moore =
-  foldr progress finalize foldable moore
+feedingFoldable =
+  foldr step id
   where
-    progress a next (Moore terminate progress) =
-      next (progress a)
-    finalize =
-      id
+    step a next =
+      next . feeding a
 
 feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
