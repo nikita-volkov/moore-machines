@@ -40,6 +40,5 @@ fromReverseListOfBytes arraySize revListOfBytes =
             unsafeWrite array offset byte *>
             loop (pred offset) bytesTail
           [] ->
-            return ()
+            unsafeFreeze array
       in loop (pred arraySize) revListOfBytes
-    unsafeFreeze array
