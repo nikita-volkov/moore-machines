@@ -12,6 +12,14 @@ import qualified Data.Text as Text
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
 
 
+{-|
+Update machine by feeding one input to it.
+-}
+{-# INLINE feeding #-}
+feeding :: a -> Moore a output -> Moore a output
+feeding input (Moore _ progress) =
+  progress input
+
 feedingFoldable :: Foldable f => f a -> Moore a b -> Moore a b
 feedingFoldable foldable moore =
   foldr progress finalize foldable moore
