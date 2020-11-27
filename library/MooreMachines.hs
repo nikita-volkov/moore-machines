@@ -21,7 +21,7 @@ feedingFoldable foldable moore =
     finalize =
       id
 
-feedingTextChars :: Text -> Moore Char o -> Moore Char o
+feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
   loop off
   where
