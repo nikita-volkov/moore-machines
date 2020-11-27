@@ -41,13 +41,13 @@ feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
   loop off
   where
-    loop !off (Moore terminate progress) =
+    loop !off moore =
       if off >= len
         then
-          Moore terminate progress
+          moore
         else
           TextArrayUtil.iter arr off $ \ char newOff ->
-            loop newOff (progress char)
+            loop newOff (feeding char moore)
 
 {-|
 Transformer of chars,
