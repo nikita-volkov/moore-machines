@@ -13,6 +13,17 @@ import qualified MooreMachines.Util.TextArray as TextArrayUtil
 
 
 {-|
+Same as 'many', but immediately folds the value.
+-}
+foldMany :: MonadPlus f => Moore a b -> f a -> f b
+foldMany machine fa =
+  let
+    loop (Moore terminate progress) =
+      (fa >>= loop . progress) <|>
+      pure terminate
+    in loop machine
+
+{-|
 Update machine by feeding one input to it.
 -}
 {-# INLINE feeding #-}

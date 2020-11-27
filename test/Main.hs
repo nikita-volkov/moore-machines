@@ -66,4 +66,14 @@ main =
           in
             expected === actual
       ]
+    ,
+    testGroup "foldMany" [
+      testProperty "" $ \(input :: Text) ->
+        let
+          actual =
+            Atto.parseOnly (Mm.foldMany ask (Atto.satisfy isAlphaNum)) input
+          expected =
+            Atto.parseOnly (many (Atto.satisfy isAlphaNum)) input
+          in expected === actual
+      ]
     ]
