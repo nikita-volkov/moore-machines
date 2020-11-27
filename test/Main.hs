@@ -15,15 +15,15 @@ import qualified MooreMachines as Mm
 
 main =
   defaultMain $ testGroup "All" $ [
-    testProperty "feedFoldable" $ \(input :: [Int]) ->
+    testProperty "feedingFoldable" $ \(input :: [Int]) ->
       input ===
-      extract (Mm.feedFoldable input ask)
+      extract (Mm.feedingFoldable input ask)
     ,
     testProperty "charText" $ \(input :: [Char]) ->
       Text.pack input ===
-      extract (Mm.feedFoldable input Mm.charText)
+      extract (Mm.feedingFoldable input Mm.charText)
     ,
-    testProperty "feedTextChars" $ \(input :: Text) ->
+    testProperty "feedingTextChars" $ \(input :: Text) ->
       input ===
-      extract (Mm.feedTextChars input Mm.charText)
+      extract (Mm.feedingTextChars input Mm.charText)
     ]

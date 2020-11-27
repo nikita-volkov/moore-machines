@@ -12,8 +12,8 @@ import qualified Data.Text as Text
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
 
 
-feedFoldable :: Foldable f => f a -> Moore a b -> Moore a b
-feedFoldable foldable moore =
+feedingFoldable :: Foldable f => f a -> Moore a b -> Moore a b
+feedingFoldable foldable moore =
   foldr progress finalize foldable moore
   where
     progress a next (Moore terminate progress) =
@@ -21,8 +21,8 @@ feedFoldable foldable moore =
     finalize =
       id
 
-feedTextChars :: Text -> Moore Char o -> Moore Char o
-feedTextChars (TextInternal.Text arr off len) =
+feedingTextChars :: Text -> Moore Char o -> Moore Char o
+feedingTextChars (TextInternal.Text arr off len) =
   loop off
   where
     loop !off (Moore terminate progress) =
