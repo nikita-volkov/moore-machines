@@ -8,6 +8,7 @@ import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck
 import qualified Test.QuickCheck as QuickCheck
 import qualified Test.QuickCheck.Property as QuickCheck
+import qualified Data.ByteString as ByteString
 import qualified Data.Text as Text
 import qualified Data.Attoparsec.Text as Atto
 import qualified MooreMachines as Mm
@@ -98,5 +99,11 @@ main =
       testProperty "" $ \(list :: [Int]) ->
         length list ===
         extract (Mm.feedingFoldable list Mm.count)
+      ]
+    ,
+    testGroup "byteString" [
+      testProperty "" $ \(list :: [Word8]) ->
+        ByteString.pack list ===
+        extract (Mm.feedingFoldable list Mm.byteString)
       ]
     ]

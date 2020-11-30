@@ -6,6 +6,7 @@ import Data.Machine.Moore
 import qualified Data.Text as Text
 import qualified Data.Text.Internal as TextInternal
 import qualified Data.Vector.Generic as GenericVector
+import qualified MooreMachines.Util.ByteString as ByteStringUtil
 import qualified MooreMachines.Util.Char as CharUtil
 import qualified MooreMachines.Util.Text as TextUtil
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
@@ -128,6 +129,17 @@ charText =
             (\byte1 byte2 -> next (byte2 : byte1 : bytes) (arraySize + 2))
         terminate =
           TextUtil.fromReverseListOfBytes arraySize bytes
+
+revList :: Moore a [a]
+revList =
+  loop []
+  where
+    loop !list =
+      Moore list (\a -> loop (a : list))
+
+byteString :: Moore Word8 ByteString
+byteString =
+  ByteStringUtil.fromReverseList <$> count <*> revList
 
 count :: Moore a Int
 count =
