@@ -49,7 +49,7 @@ feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
   loop off
   where
-    loop !off moore =
+    loop !off !moore =
       if off >= len
         then
           moore
