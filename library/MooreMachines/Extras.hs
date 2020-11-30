@@ -33,8 +33,8 @@ feedingFoldable :: Foldable f => f a -> Moore a b -> Moore a b
 feedingFoldable =
   foldr step id
   where
-    step a next =
-      next . feeding a
+    step a next !moore =
+      next (feeding a moore)
 
 feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
