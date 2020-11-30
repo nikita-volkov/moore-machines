@@ -36,6 +36,15 @@ feedingFoldable =
     step a next !moore =
       next (feeding a moore)
 
+feedingIndexable :: (Int -> indexable -> a) -> Int -> Int -> indexable -> Moore a b -> Moore a b
+feedingIndexable getElement startOff afterEndOff indexable =
+  loop startOff
+  where
+    loop !off !machine =
+      if off < afterEndOff
+        then loop (succ off) (feeding (getElement off indexable) machine)
+        else machine
+
 feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
   loop off
