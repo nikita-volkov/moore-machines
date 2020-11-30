@@ -11,6 +11,7 @@ import qualified Test.QuickCheck.Property as QuickCheck
 import qualified Data.ByteString as ByteString
 import qualified Data.Text as Text
 import qualified Data.Attoparsec.Text as Atto
+import qualified Data.Vector as Vector
 import qualified MooreMachines as Mm
 
 
@@ -105,5 +106,11 @@ main =
       testProperty "" $ \(list :: [Word8]) ->
         ByteString.pack list ===
         extract (Mm.feedingFoldable list Mm.byteString)
+      ]
+    ,
+    testGroup "vector" [
+      testProperty "" $ \(list :: [Int]) ->
+        fromList @(Vector.Vector Int) list ===
+        extract (Mm.feedingFoldable list Mm.vector)
       ]
     ]

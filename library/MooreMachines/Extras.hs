@@ -10,6 +10,7 @@ import qualified MooreMachines.Util.ByteString as ByteStringUtil
 import qualified MooreMachines.Util.Char as CharUtil
 import qualified MooreMachines.Util.Text as TextUtil
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
+import qualified MooreMachines.Util.Vector as VectorUtil
 
 
 {-|
@@ -140,6 +141,10 @@ revList =
 byteString :: Moore Word8 ByteString
 byteString =
   ByteStringUtil.fromReverseList <$> count <*> revList
+
+vector :: GenericVector.Vector v a => Moore a (v a)
+vector =
+  VectorUtil.fromReverseListN <$> count <*> revList
 
 count :: Moore a Int
 count =
