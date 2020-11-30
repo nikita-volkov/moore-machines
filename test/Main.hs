@@ -76,4 +76,27 @@ main =
             Atto.parseOnly (many (Atto.satisfy isAlphaNum)) input
           in expected === actual
       ]
+    ,
+    testGroup "feedingMany" [
+      testProperty "" $ \(input :: Text) ->
+        let
+          actual =
+            Atto.parseOnly (Mm.feedingMany ask (Atto.satisfy isAlphaNum)) input &
+            fmap extract
+          expected =
+            Atto.parseOnly (many (Atto.satisfy isAlphaNum)) input
+          in expected === actual
+      ]
+    ,
+    testGroup "concat" [
+      testProperty "" $ \(list :: [[Int]]) ->
+        concat list ===
+        extract (Mm.feedingFoldable list Mm.concat)
+      ]
+    ,
+    testGroup "count" [
+      testProperty "" $ \(list :: [Int]) ->
+        length list ===
+        extract (Mm.feedingFoldable list Mm.count)
+      ]
     ]

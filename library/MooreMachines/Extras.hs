@@ -5,6 +5,7 @@ import MooreMachines.Prelude
 import Data.Machine.Moore
 import qualified Data.Text as Text
 import qualified Data.Text.Internal as TextInternal
+import qualified Data.Vector.Generic as GenericVector
 import qualified MooreMachines.Util.Char as CharUtil
 import qualified MooreMachines.Util.Text as TextUtil
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
@@ -19,6 +20,18 @@ foldMany machine fa =
     loop (Moore terminate progress) =
       (fa >>= loop . progress) <|>
       pure terminate
+    in loop machine
+
+{-|
+Same as 'foldMany', but produces a machine,
+which you can continue feeding afterwards or extract the result from it.
+-}
+feedingMany :: MonadPlus f => Moore a b -> f a -> f (Moore a b)
+feedingMany machine fa =
+  let
+    loop machine =
+      (fa >>= loop . flip feeding machine) <|>
+      pure machine
     in loop machine
 
 {-|
@@ -51,6 +64,10 @@ feedingIndexable getElement startOff afterEndOff indexable =
       if off < afterEndOff
         then loop (succ off) (feeding (getElement off indexable) machine)
         else machine
+
+feedingVector :: GenericVector.Vector v a => v a -> Moore a b -> Moore a b
+feedingVector vec =
+  feedingIndexable (flip GenericVector.unsafeIndex) 0 (GenericVector.length vec) vec
 
 feedingTextChars :: Text -> Moore Char output -> Moore Char output
 feedingTextChars (TextInternal.Text arr off len) =
@@ -111,3 +128,17 @@ charText =
             (\byte1 byte2 -> next (byte2 : byte1 : bytes) (arraySize + 2))
         terminate =
           TextUtil.fromReverseListOfBytes arraySize bytes
+
+count :: Moore a Int
+count =
+  loop 0
+  where
+    loop !count =
+      Moore count (const (loop (succ count)))
+
+concat :: Monoid a => Moore a a
+concat =
+  loop mempty
+  where
+    loop !acc =
+      Moore acc (\ input -> loop (acc <> input))
