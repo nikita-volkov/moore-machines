@@ -3,8 +3,8 @@ where
 
 import MooreMachines.Prelude
 import Data.Machine.Moore
-import qualified Data.Text.Internal as TextInternal
 import qualified Data.Text as Text
+import qualified Data.Text.Internal as TextInternal
 import qualified MooreMachines.Util.Char as CharUtil
 import qualified MooreMachines.Util.Text as TextUtil
 import qualified MooreMachines.Util.TextArray as TextArrayUtil
