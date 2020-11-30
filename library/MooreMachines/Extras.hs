@@ -29,6 +29,9 @@ feeding :: a -> Moore a output -> Moore a output
 feeding input (Moore _ progress) =
   progress input
 
+{-|
+Update machine by feeding all elements of a foldable to it.
+-}
 feedingFoldable :: Foldable f => f a -> Moore a b -> Moore a b
 feedingFoldable =
   foldr step id
@@ -36,6 +39,10 @@ feedingFoldable =
     step a next !moore =
       next (feeding a moore)
 
+{-|
+A low-level helper allowing to feed indexing-optimized data-structures,
+such as 'Vector'.
+-}
 feedingIndexable :: (Int -> indexable -> a) -> Int -> Int -> indexable -> Moore a b -> Moore a b
 feedingIndexable getElement startOff afterEndOff indexable =
   loop startOff
