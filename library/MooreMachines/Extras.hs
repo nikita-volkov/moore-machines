@@ -118,7 +118,7 @@ trimmingWhitespace =
           extract machine
 
 {-|
-Effeciently construct text from chars.
+Efficiently construct text from chars.
 
 During the feeding phase aggregates the chars into a list of UTF-16 encoded bytes in reverse order and
 counts their amount.
