@@ -97,8 +97,8 @@ leftFolder step =
         progress input =
           loop (step input acc)
 
-traversingTextChars :: Moore Char a -> Moore Text a
-traversingTextChars =
+foldingTextChars :: Moore Char a -> Moore Text a
+foldingTextChars =
   fmap extract . leftFolder feedingTextChars
 
 {-|
