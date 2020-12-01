@@ -147,4 +147,10 @@ main =
         first (const ()) (TextEncoding.decodeUtf8' (mconcat input))
           === first (const ()) (extract (Mm.feedingFoldable input (Mm.decodingUtf8 Mm.textText)))
       ]
+    ,
+    testGroup "traversingTextChars" [
+      testProperty "" $ \ (input :: [Text]) ->
+        Text.unpack (mconcat input)
+          === extract (Mm.feedingFoldable input (Mm.traversingTextChars ask))
+      ]
     ]

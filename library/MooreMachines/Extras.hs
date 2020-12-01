@@ -87,6 +87,13 @@ feedingTextChars (TextInternal.Text arr off len) =
           TextArrayUtil.iter arr off $ \ char newOff ->
             loop newOff (feeding char moore)
 
+traversingTextChars :: Moore Char a -> Moore Text a
+traversingTextChars !moore =
+  Moore (extract moore) progress
+  where
+    progress input =
+      feedingTextChars input moore & traversingTextChars
+
 {-|
 Transformer of chars,
 replaces all space-like chars with space,
