@@ -117,6 +117,14 @@ trimmingWhitespace =
         terminate =
           extract machine
 
+{-|
+Effeciently construct text from chars.
+
+During the feeding phase aggregates the chars into a list of UTF-16 encoded bytes in reverse order and
+counts their amount.
+During the extraction allocates the accordingly sized array and
+populates it with bytes from the list.
+-}
 charText :: Moore Char Text
 charText =
   next [] 0
