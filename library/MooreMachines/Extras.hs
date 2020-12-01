@@ -94,7 +94,7 @@ trimmingWhitespace :: Moore Char output -> Moore Char output
 trimmingWhitespace =
   loop False False False
   where
-    loop notFirst spacePending newlinePending machine =
+    loop notFirst spacePending newlinePending !machine =
       Moore terminate progress
       where
         progress char =
@@ -134,8 +134,8 @@ charText =
       where
         progress =
           CharUtil.encodeInUtf16
-            (\byte -> next (byte : bytes) (succ arraySize))
-            (\byte1 byte2 -> next (byte2 : byte1 : bytes) (arraySize + 2))
+            (\(!byte) -> next (byte : bytes) (succ arraySize))
+            (\(!byte1) (!byte2) -> next (byte2 : byte1 : bytes) (arraySize + 2))
         terminate =
           TextUtil.fromReverseListOfBytes arraySize bytes
 
