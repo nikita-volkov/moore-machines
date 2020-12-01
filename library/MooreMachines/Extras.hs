@@ -87,19 +87,19 @@ feedingTextChars (TextInternal.Text arr off len) =
           TextArrayUtil.iter arr off $ \ char newOff ->
             loop newOff (feeding char moore)
 
-aggregating :: (c -> Moore a b -> Moore a b) -> Moore a b -> Moore c (Moore a b)
-aggregating feeding =
+leftFolder :: (a -> b -> b) -> b -> Moore a b
+leftFolder step =
   loop
   where
-    loop !moore =
-      Moore moore progress
+    loop !acc =
+      Moore acc progress
       where
         progress input =
-          loop (feeding input moore)
+          loop (step input acc)
 
 traversingTextChars :: Moore Char a -> Moore Text a
 traversingTextChars =
-  fmap extract . aggregating feedingTextChars
+  fmap extract . leftFolder feedingTextChars
 
 {-|
 Transformer of chars,
