@@ -3,9 +3,12 @@ where
 
 import MooreMachines.Prelude hiding (sum)
 import Data.Machine.Moore
+import qualified Data.ByteString as ByteString
 import qualified Data.Text as Text
-import qualified Data.Text.Unsafe as TextUnsafe
+import qualified Data.Text.Encoding as TextEncoding
+import qualified Data.Text.Encoding.Error as TextEncodingError
 import qualified Data.Text.Internal as TextInternal
+import qualified Data.Text.Unsafe as TextUnsafe
 import qualified Data.Vector.Generic as GenericVector
 import qualified MooreMachines.Util.ByteString as ByteStringUtil
 import qualified MooreMachines.Util.Char as CharUtil
@@ -182,3 +185,27 @@ concat =
   where
     loop !acc =
       Moore acc (\ input -> loop (acc <> input))
+
+{-|
+Upgrade a machine which reduces text chunks
+to a machine which decodes binary data chunks,
+possibly failing and exposing the failed binary chunk in the result.
+-}
+decodingUtf8 :: Moore Text a -> Moore ByteString (Either ByteString a)
+decodingUtf8 =
+  unfinished "" TextEncoding.streamDecodeUtf8
+  where
+    unfinished remainder decoder !moore =
+      Moore terminate progress
+      where
+        terminate =
+          if ByteString.null remainder
+            then Right (extract moore)
+            else Left remainder
+        progress input =
+          catchPureException fromDecoding fromException (decoder input)
+          where
+            fromDecoding (TextEncoding.Some decodedChunk remainder newDecoder) =
+              unfinished remainder newDecoder (feeding decodedChunk moore)
+            fromException (TextEncodingError.DecodeError _ _) =
+              pure (Left input)

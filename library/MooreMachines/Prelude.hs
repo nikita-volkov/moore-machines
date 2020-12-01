@@ -1,6 +1,7 @@
 module MooreMachines.Prelude
 (
   module Exports,
+  catchPureException,
 )
 where
 
@@ -114,3 +115,13 @@ import Data.Profunctor.Unsafe as Exports
 import Data.Profunctor.Choice as Exports
 import Data.Profunctor.Closed as Exports
 import Data.Profunctor.Strong as Exports
+
+{-|
+Make pure computation not throw exceptions.
+-}
+{-# INLINE catchPureException #-}
+catchPureException :: (Exception e) => (a -> b) -> (e -> b) -> a -> b
+catchPureException cont exceptionMapper thrower =
+  unsafeDupablePerformIO (catch
+    (fmap cont (evaluate thrower))
+    (return . exceptionMapper))

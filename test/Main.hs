@@ -9,7 +9,10 @@ import Test.Tasty.QuickCheck
 import qualified Test.QuickCheck as QuickCheck
 import qualified Test.QuickCheck.Property as QuickCheck
 import qualified Data.ByteString as ByteString
+import qualified Data.ByteString.Builder.Extra as ByteStringBuilderExtra
+import qualified Data.ByteString.Lazy as ByteStringLazy
 import qualified Data.Text as Text
+import qualified Data.Text.Encoding as TextEncoding
 import qualified Data.Attoparsec.Text as Atto
 import qualified Data.Vector as Vector
 import qualified MooreMachines as Mm
@@ -124,5 +127,24 @@ main =
       testProperty "" $ \(input :: [Text]) ->
         mconcat input ===
         extract (Mm.feedingFoldable input Mm.textText)
+      ]
+    ,
+    testGroup "decodingUtf8" [
+      testProperty "Valid data" $ \(input :: Text) ->
+        let
+          binaryChunks =
+            input
+              & Text.encodeUtf8Builder
+              & ByteStringBuilderExtra.toLazyByteStringWith
+                  (ByteStringBuilderExtra.safeStrategy 3 9)
+                  ""
+              & ByteStringLazy.toChunks
+          in
+            Right input
+              === extract (Mm.feedingFoldable binaryChunks (Mm.decodingUtf8 Mm.textText))
+      ,
+      testProperty "Any data" $ QuickCheck.verbose $ \(input :: [ByteString]) ->
+        first (const ()) (TextEncoding.decodeUtf8' (mconcat input))
+          === first (const ()) (extract (Mm.feedingFoldable input (Mm.decodingUtf8 Mm.textText)))
       ]
     ]
