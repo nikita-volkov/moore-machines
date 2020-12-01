@@ -10,3 +10,7 @@ import qualified MooreMachines.Util.TextArray as TextArrayUtil
 fromReverseListOfBytes :: Int -> [Word16] -> Text
 fromReverseListOfBytes arraySize revListOfBytes =
   TextInternal.Text (TextArrayUtil.fromReverseListOfBytes arraySize revListOfBytes) 0 arraySize
+
+fromReverseListOfTexts :: Int -> [Text] -> Text
+fromReverseListOfTexts size list =
+  TextInternal.Text (TextArrayUtil.fromReverseListOfTexts size list) 0 size

@@ -1,9 +1,10 @@
 module MooreMachines.Extras
 where
 
-import MooreMachines.Prelude
+import MooreMachines.Prelude hiding (sum)
 import Data.Machine.Moore
 import qualified Data.Text as Text
+import qualified Data.Text.Unsafe as TextUnsafe
 import qualified Data.Text.Internal as TextInternal
 import qualified Data.Vector.Generic as GenericVector
 import qualified MooreMachines.Util.ByteString as ByteStringUtil
@@ -139,6 +140,13 @@ charText =
         terminate =
           TextUtil.fromReverseListOfBytes arraySize bytes
 
+{-|
+Efficiently concatenate texts.
+-}
+textText :: Moore Text Text
+textText =
+  TextUtil.fromReverseListOfTexts <$> lmap TextUnsafe.lengthWord16 sum <*> revList
+
 revList :: Moore a [a]
 revList =
   loop []
@@ -160,6 +168,13 @@ count =
   where
     loop !count =
       Moore count (const (loop (succ count)))
+
+sum :: Num a => Moore a a
+sum =
+  loop 0
+  where
+    loop !a =
+      Moore a (\b -> loop (a + b))
 
 concat :: Monoid a => Moore a a
 concat =

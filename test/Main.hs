@@ -113,4 +113,16 @@ main =
         fromList @(Vector.Vector Int) list ===
         extract (Mm.feedingFoldable list Mm.vector)
       ]
+    ,
+    testGroup "sum" [
+        testProperty "" $ \(list :: [Int]) ->
+          sum list ===
+          extract (Mm.feedingFoldable list Mm.sum)
+      ]
+    ,
+    testGroup "textText" [
+      testProperty "" $ \(input :: [Text]) ->
+        mconcat input ===
+        extract (Mm.feedingFoldable input Mm.textText)
+      ]
     ]

@@ -42,3 +42,23 @@ fromReverseListOfBytes arraySize revListOfBytes =
           [] ->
             unsafeFreeze array
       in loop (pred arraySize) revListOfBytes
+
+fromReverseListOfTexts :: Int -> [Text] -> Array
+fromReverseListOfTexts size list =
+  runST $ do
+    array <- new size
+    let
+      loop offset =
+        \case
+          TextInternal.Text chunkArray chunkOffset chunkSize : chunks ->
+            if chunkSize == 0
+              then loop offset chunks
+              else let
+                !newOffset =
+                  offset - chunkSize
+                in
+                  copyI array newOffset chunkArray chunkOffset offset *>
+                  loop newOffset chunks
+          _ ->
+            unsafeFreeze array
+      in loop size list

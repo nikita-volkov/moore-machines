@@ -107,3 +107,10 @@ import Data.Text as Exports (Text)
 -- comonad
 -------------------------
 import Control.Comonad as Exports
+
+-- profunctors
+-------------------------
+import Data.Profunctor.Unsafe as Exports
+import Data.Profunctor.Choice as Exports
+import Data.Profunctor.Closed as Exports
+import Data.Profunctor.Strong as Exports
