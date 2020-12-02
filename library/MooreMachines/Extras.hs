@@ -87,8 +87,8 @@ feedingTextChars (TextInternal.Text arr off len) =
           TextArrayUtil.iter arr off $ \ char newOff ->
             loop newOff (feeding char moore)
 
-leftFolder :: (a -> b -> b) -> b -> Moore a b
-leftFolder step =
+folder :: (a -> b -> b) -> b -> Moore a b
+folder step =
   loop
   where
     loop !acc =
@@ -99,7 +99,7 @@ leftFolder step =
 
 foldingTextChars :: Moore Char a -> Moore Text a
 foldingTextChars =
-  fmap extract . leftFolder feedingTextChars
+  fmap extract . folder feedingTextChars
 
 {-|
 Transformer of chars,
