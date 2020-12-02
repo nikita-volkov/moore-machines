@@ -97,9 +97,13 @@ folder step =
         progress input =
           loop (step input acc)
 
+foldingWithStep :: (forall o. i2 -> Moore i1 o -> Moore i1 o) -> Moore i1 o -> Moore i2 o
+foldingWithStep step =
+  fmap extract . folder step
+
 foldingTextChars :: Moore Char a -> Moore Text a
 foldingTextChars =
-  fmap extract . folder feedingTextChars
+  foldingWithStep feedingTextChars
 
 {-|
 Transformer of chars,
