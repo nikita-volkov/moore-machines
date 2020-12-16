@@ -4,6 +4,7 @@ where
 import MooreMachines.Prelude hiding (sum)
 import Data.Machine.Moore
 import qualified Data.ByteString as ByteString
+import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as Text
 import qualified Data.Text.Encoding as TextEncoding
 import qualified Data.Text.Encoding.Error as TextEncodingError
@@ -203,6 +204,15 @@ concat =
   where
     loop !acc =
       Moore acc (\ input -> loop (acc <> input))
+
+countEach :: (Eq a, Hashable a) => Moore a (HashMap a Int)
+countEach =
+  loop HashMap.empty
+  where
+    loop !a =
+      Moore a (\b -> loop (HashMap.alter alterer b a))
+    alterer =
+      Just . maybe 1 succ
 
 {-|
 Upgrade a machine which reduces text chunks
