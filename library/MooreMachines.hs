@@ -1,7 +1,6 @@
 module MooreMachines
-(
-  module Exports,
-)
+  ( module Exports,
+  )
 where
 
 import Data.Machine.Moore as Exports

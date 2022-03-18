@@ -1,10 +1,8 @@
-module MooreMachines.Util.ByteString
-where
+module MooreMachines.Util.ByteString where
 
-import MooreMachines.Prelude
 import Data.ByteString
 import Data.ByteString.Internal
-
+import MooreMachines.Prelude
 
 fromReverseList :: Int -> [Word8] -> ByteString
 fromReverseList size list =
