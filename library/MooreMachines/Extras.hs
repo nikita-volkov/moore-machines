@@ -95,6 +95,16 @@ foldingTextChars :: Moore Char a -> Moore Text a
 foldingTextChars =
   foldingWithStep feedingTextChars
 
+mapInput :: (a -> b) -> Moore b o -> Moore a o
+mapInput map (Moore terminate progress) =
+  Moore terminate (mapInput map . progress . map)
+
+mapProgress ::
+  (forall o. (b -> Moore b o) -> (a -> Moore a o)) ->
+  (forall o. Moore b o -> Moore a o)
+mapProgress map (Moore terminate progress) =
+  Moore terminate (map progress)
+
 -- |
 -- Transformer of chars,
 -- replaces all space-like chars with space,
